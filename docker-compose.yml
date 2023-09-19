@@ -1,0 +1,66 @@
+version: '3.0'
+services:
+  cockroach-db:
+    image: cockroachdb/cockroach:v23.1.10
+    container_name: cockroach_db
+    command: start-single-node --insecure
+    volumes:
+      - cockroach-data:/cockroach/cockroach-data
+    networks:
+      - shared-network
+    ports:
+      - 26257:26257
+      - 8080:8080
+
+  nestjs-app:
+    container_name: nestjs_api
+    build: 
+      context: nestjs-container-app
+      target: development
+      dockerfile: dockerfile
+    command: npm run start:dev
+    networks:
+      - shared-network
+    ports:
+      - 3000:3000
+    volumes:
+      - ./nestjs-container-app:/usr/src/app
+      - /usr/src/app/node_modules
+    depends_on:
+      - cockroach-db
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
+  
+  sveltekit-app:
+    container_name: svelte_app
+    build: 
+      context: sveltekit-container-app
+      target: development
+      dockerfile: Dockerfile
+    command: npm run dev
+    networks:
+      - shared-network
+    ports:
+      - 5173:5173
+    volumes:
+      - ./svelte-container-app:/usr/src/app
+      - /usr/src/app/node_modules
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5173"]
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
+
+  networks:
+    shared-network:
+      driver: bridge
+  
+  volumes:
+    cockroach-db:
