@@ -15,7 +15,7 @@ services:
   nestjs-app:
     container_name: nestjs_api
     build: 
-      context: nestjs-container-app
+      context: backend
       target: development
       dockerfile: dockerfile
     command: npm run start:dev
@@ -39,7 +39,7 @@ services:
   sveltekit-app:
     container_name: svelte_app
     build: 
-      context: sveltekit-container-app
+      context: frontend
       target: development
       dockerfile: Dockerfile
     command: npm run dev

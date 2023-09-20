@@ -1,0 +1,6 @@
+[submodule "frontend"]
+	path = frontend
+	url = https://github.com/BragdonD/deezer-clone-frontend.git
+[submodule "backend"]
+	path = backend
+	url = https://github.com/BragdonD/deezer-clone-backend.git
